@@ -190,14 +190,13 @@ platform :ios do
   end
 
   lane :cru_update_commit do |options|
+    default_branch = ENV['CRU_DEFAULT_BRANCH']
+
     clean_build_artifacts
 
-    if is_ci?
-      travis_branch = ENV["TRAVIS_BRANCH"]
-
-      sh('git', 'checkout', 'master')
-      sh('git', 'pull', 'origin', 'master')
-    end
+    puts("Switching to branch: #{default_branch} to commit version bump.")
+    sh('git', 'checkout', default_branch)
+    git_pull
 
     commit_version_bump(
         xcodeproj: ENV["CRU_XCODEPROJ"],
