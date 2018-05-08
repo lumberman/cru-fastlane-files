@@ -68,8 +68,6 @@ platform :ios do
     )
 
     cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
-
-    #TODO - commit to save downloaded onesky files to master now?
   end
 
   # Localization functions
@@ -94,6 +92,30 @@ platform :ios do
         puts("Failed to import #{locale}")
       end
     end
+
+    cru_commit_localization_files(filename: filename)
+  end
+
+  desc 'Commit downloaded localization files to default branch and push to remote'
+  lane :cru_commit_localization_files |options| do
+    filename = options[:filename]
+    default_branch = ENV['CRU_DEFAULT_BRANCH']
+    build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
+
+    begin
+      puts("Switching to branch: #{default_branch} to commit localization files.")
+      sh('git', 'checkout', default_branch)
+      git_pull
+
+      git_commit(path: "*/#{filename}",
+                 message: "[skip ci] Adding latest localization files from Onesky")
+      push_to_git_remote
+    rescue
+      puts("Failed to commit localization files.. maybe none to commit?")
+    end
+
+    puts("Switching to back to branch: #{build_branch} to continue building project.")
+    sh('git', 'checkout', build_branch)
   end
 
   # Helper functions
@@ -116,7 +138,7 @@ platform :ios do
     unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
       cru_download_localizations
     end
-    
+
     automatic_code_signing(
         use_automatic_signing: false,
         profile_name: profile_name
