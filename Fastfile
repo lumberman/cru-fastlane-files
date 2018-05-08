@@ -33,7 +33,7 @@ platform :ios do
       )
     end
 
-    build_number = cru_increment_build_number
+    build_number = cru_set_build_number
 
     cru_build_app(export_method: 'app-store',
                   type: 'appstore',
@@ -62,7 +62,7 @@ platform :ios do
   desc "Description of what the lane does"
   desc "Push a new (beta) release build to Crashlytics"
   lane :beta do
-    build_number = cru_increment_build_number
+    build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
 
     unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
@@ -120,8 +120,8 @@ platform :ios do
 
   # Helper functions
 
-  lane :cru_increment_build_number do
-    build_number = ENV["TRAVIS_BUILD_NUMBER"] || get_build_number.to_i + 1
+  lane :cru_set_build_number do
+    build_number = ENV["TRAVIS_BUILD_NUMBER"]
 
     increment_build_number(
         build_number: build_number
