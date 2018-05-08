@@ -76,6 +76,8 @@ platform :ios do
     )
 
     cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
+
+    #TODO - commit to save downloaded onesky files to master now?
   end
 
   # Localization functions
