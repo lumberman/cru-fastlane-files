@@ -22,10 +22,6 @@ platform :ios do
     version_number = get_version_number(
         target: target
     )
-
-    unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
-      cru_download_localizations
-    end
     
     if options.key?(:version)
       version_number = increment_version_number(
@@ -62,10 +58,6 @@ platform :ios do
   lane :beta do
     build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
-
-    unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
-      cru_download_localizations
-    end
 
     cru_build_app
 
@@ -121,6 +113,10 @@ platform :ios do
     type = options[:type] || 'appstore'
     export_method = options[:export_method] || 'app-store'
 
+    unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
+      cru_download_localizations
+    end
+    
     automatic_code_signing(
         use_automatic_signing: false,
         profile_name: profile_name
