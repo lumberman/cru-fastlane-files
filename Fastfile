@@ -69,14 +69,13 @@ platform :ios do
 
     cru_build_app
 
-    crashlytics(
-        crashlytics_path: ENV["CRASHLYTICS_FRAMEWORK_PATH"],
-        ipa_path: ENV["CRU_IPA_PATH"],
-        groups: ENV["CRASHLYTICS_GROUPS"],
-        notes: "Beta build for #{target} iOS. See Jira board for issues that are \"Ready for QA\""
+    testflight(
+        app_identifier: ENV["CRU_APP_IDENTIFIER"],
+        ipa: ENV["CRU_IPA_PATH"],
+        dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
     )
 
-    cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to Crashlytics.")
+    cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
   end
 
   # Localization functions
