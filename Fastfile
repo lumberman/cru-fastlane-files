@@ -170,22 +170,21 @@ platform :ios do
     # Travis requires a keychain to be created to store the certificates in, however
     # using this utility to create a keychain locally will really mess up local keychains
     # and is not required for a successful build
-    if is_ci?
-      create_keychain(
-          name: ENV["MATCH_KEYCHAIN_NAME"],
-          password: ENV["MATCH_PASSWORD"],
-          default_keychain: true,
-          unlock: true,
-          timeout: 3600,
-          add_to_search_list: true
-      )
+    create_keychain(
+        name: ENV["MATCH_KEYCHAIN_NAME"],
+        password: ENV["MATCH_PASSWORD"],
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        add_to_search_list: true
+    )
 
-      match(type: options[:type],
-            keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
-            keychain_password: ENV["MATCH_PASSWORD"])
-    else
-      match(type: options[:type])
-    end
+    match(type: options[:type],
+          username: ENV['CRU_FASTLANE_USERNAME'],
+          app_identifier: ENV['CRU_APP_IDENTIFIER'],
+          keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
+          keychain_password: ENV["MATCH_PASSWORD"])
+
   end
 
   lane :cru_update_commit do |options|
