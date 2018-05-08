@@ -84,6 +84,7 @@ platform :ios do
   lane :cru_download_localizations do
     locales = ENV["ONESKY_ENABLED_LOCALIZATIONS"].split(',')
     filename = ENV["ONESKY_FILENAME"]
+    scheme = ENV['CRU_SCHEME']
 
     locales.each do |locale|
       begin
@@ -93,7 +94,7 @@ platform :ios do
             project_id: ENV["ONESKY_PROJECT_ID"],
             locale: locale,
             filename: filename,
-            destination: "./mpdx-ios/#{locale}.lproj/#{filename}"
+            destination: "./#{scheme}/#{locale}.lproj/#{filename}"
         )
       rescue
         puts("Failed to import #{locale}")
