@@ -21,21 +21,13 @@ platform :ios do
     version_number = get_version_number(
         target: target
     )
-    
-    if options.key?(:version)
-      version_number = increment_version_number(
-          version_number: options[:version].gsub('v','') # Automatically increment major version number
-      )
-    end
 
-    build_number = cru_set_build_number
-
-    cru_build_app
+    build_number = get_build_number
 
     upload_to_app_store(
         username: ENV['CRU_FASTLANE_USERNAME'],
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
-        ipa: ENV["CRU_IPA_PATH"],
+        build_number: build_number,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
         skip_screenshots: true,
         skip_metadata: true,
@@ -44,7 +36,9 @@ platform :ios do
         submit_for_review: submit_for_review,
     )
 
-    cru_update_commit(message: "[skip ci] Version number bump to #{version_number}, Build number bump to ##{build_number}")
+    increment_version_number # do a default patch bump for the next version
+
+    cru_update_commit(message: "[skip ci] Version number bump to #{version_number}, Build number: ##{build_number}")
 
     cru_notify_users("#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
@@ -66,6 +60,8 @@ platform :ios do
         ipa: ipa_path,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
     )
+
+    cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
 
     cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
   end
