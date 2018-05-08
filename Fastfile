@@ -98,7 +98,7 @@ platform :ios do
   end
 
   desc 'Commit downloaded localization files to default branch and push to remote'
-  lane :cru_commit_localization_files |options| do
+  lane :cru_commit_localization_files do |options|
     filename = options[:filename]
     default_branch = ENV['CRU_DEFAULT_BRANCH']
     build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
