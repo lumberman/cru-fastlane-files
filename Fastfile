@@ -58,11 +58,11 @@ platform :ios do
     build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
 
-    cru_build_app
+    ipa_path = cru_build_app
 
     testflight(
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
-        ipa: ENV["CRU_IPA_PATH"],
+        ipa: ipa_path,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
     )
 
