@@ -106,9 +106,7 @@ platform :ios do
 
     end
     if is_ci?
-      travis_branch = ENV["TRAVIS_BRANCH"]
-
-      sh('git', 'checkout', travis_branch)
+      sh('git', 'checkout', 'origin', 'master')
     end
 
     begin
