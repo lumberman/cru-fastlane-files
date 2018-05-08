@@ -99,7 +99,6 @@ platform :ios do
   lane :cru_commit_localization_files do |options|
     filename = options[:filename]
     default_branch = ENV['CRU_DEFAULT_BRANCH']
-    build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
 
     begin
       puts("Switching to branch: #{default_branch} to commit localization files.")
@@ -112,9 +111,6 @@ platform :ios do
     rescue
       puts("Failed to commit localization files.. maybe none to commit?")
     end
-
-    puts("Switching to back to branch: #{build_branch} to continue building project.")
-    sh('git', 'checkout', build_branch)
   end
 
   # Helper functions
@@ -139,8 +135,8 @@ platform :ios do
       cru_download_localizations
     end
 
-    puts("Ensure local git is back where travis expects: #{build_branch}")
-    ensure_git_branch(branch: build_branch)
+    puts("Switching to branch: #{build_branch} to continue building project.")
+    sh('git', 'checkout', build_branch)
 
     automatic_code_signing(
         use_automatic_signing: false,
