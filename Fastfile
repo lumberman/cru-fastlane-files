@@ -135,7 +135,7 @@ platform :ios do
     export_method = options[:export_method] || 'app-store'
     build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
 
-    unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
+    if ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].nil?
       cru_download_localizations
     end
 
@@ -149,7 +149,7 @@ platform :ios do
 
     cru_fetch_certs(type: type)
 
-    unless ENV["CRU_SKIP_COCOAPODS"].present?
+    if ENV["CRU_SKIP_COCOAPODS"].nil?
       cocoapods(
           podfile: './Podfile'
       )
