@@ -103,18 +103,6 @@ platform :ios do
       rescue
         puts("Failed to import #{locale}")
       end
-
-    end
-    if is_ci?
-      sh('git', 'checkout', 'origin', 'master')
-    end
-
-    begin
-      git_commit(path: "*/#{filename}",
-                 message: "[skip ci] Adding latest localization files from Onesky")
-      push_to_git_remote
-    rescue
-      puts("Failed to commit localization files.. maybe none to commit?")
     end
   end
 
