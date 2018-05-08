@@ -55,8 +55,10 @@ platform :ios do
   desc "Description of what the lane does"
   desc "Push a new (beta) release build to Crashlytics"
   lane :beta do
-    build_number = cru_set_build_number
+    # build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
+
+    puts("echo target: #{target}")
 
     cru_build_app
 
