@@ -33,6 +33,7 @@ platform :ios do
     cru_build_app
 
     upload_to_app_store(
+        username: ENV['CRU_FASTLANE_USERNAME'],
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
         ipa: ENV["CRU_IPA_PATH"],
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
@@ -61,6 +62,7 @@ platform :ios do
     ipa_path = cru_build_app
 
     testflight(
+        username: ENV['CRU_FASTLANE_USERNAME'],
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
         ipa: ipa_path,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
