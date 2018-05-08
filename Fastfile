@@ -134,10 +134,14 @@ platform :ios do
     profile_name = options[:profile_name] || ENV["CRU_APPSTORE_PROFILE_NAME"]
     type = options[:type] || 'appstore'
     export_method = options[:export_method] || 'app-store'
+    build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
 
     unless ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].present?
       cru_download_localizations
     end
+
+    puts("Ensure local git is back where travis expects: #{build_branch}")
+    ensure_git_branch(branch: build_branch)
 
     automatic_code_signing(
         use_automatic_signing: false,
