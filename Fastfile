@@ -15,7 +15,6 @@ platform :ios do
 
   desc "Push a new release build to the App Store"
   lane :release do |options|
-    profile_name = ENV["CRU_APPSTORE_PROFILE_NAME"]
     target = ENV["CRU_TARGET"]
     submit_for_review = options.key?(:submit) && options[:submit] || false
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false
