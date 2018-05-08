@@ -53,8 +53,7 @@ platform :ios do
     end
   end
 
-  desc "Description of what the lane does"
-  desc "Push a new (beta) release build to Crashlytics"
+  desc "Push a new (beta) release build to TestFlight"
   lane :beta do
     build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
