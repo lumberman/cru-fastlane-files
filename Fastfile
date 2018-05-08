@@ -35,9 +35,7 @@ platform :ios do
 
     build_number = cru_set_build_number
 
-    cru_build_app(export_method: 'app-store',
-                  type: 'appstore',
-                  profile_name: profile_name)
+    cru_build_app
 
     upload_to_app_store(
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
@@ -69,9 +67,7 @@ platform :ios do
       cru_download_localizations
     end
 
-    cru_build_app(export_method: 'ad-hoc',
-                  type: 'adhoc',
-                  profile_name: ENV["CRU_ADHOC_PROFILE_NAME"])
+    cru_build_app
 
     crashlytics(
         crashlytics_path: ENV["CRASHLYTICS_FRAMEWORK_PATH"],
@@ -119,9 +115,9 @@ platform :ios do
   end
 
   lane :cru_build_app do |options|
-    profile_name = options[:profile_name] || ENV["CRU_ADHOC_PROFILE_NAME"]
-    type = options[:type] || 'adhoc'
-    export_method = options[:export_method] || 'ad-hoc'
+    profile_name = options[:profile_name] || ENV["CRU_APPSTORE_PROFILE_NAME"]
+    type = options[:type] || 'appstore'
+    export_method = options[:export_method] || 'app-store'
 
     automatic_code_signing(
         use_automatic_signing: false,
