@@ -40,6 +40,8 @@ platform :ios do
 
     cru_update_commit(message: "[skip ci] Version number bump to #{version_number}, Build number: ##{build_number}")
 
+    push_to_git_remote
+
     cru_notify_users("#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
     if submit_for_review
@@ -63,6 +65,8 @@ platform :ios do
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
 
+    push_to_git_remote
+
     cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
   end
 
@@ -73,12 +77,6 @@ platform :ios do
     locales = ENV["ONESKY_ENABLED_LOCALIZATIONS"].split(',')
     filename = ENV["ONESKY_FILENAME"]
     scheme = ENV['CRU_SCHEME']
-    default_branch = ENV['CRU_DEFAULT_BRANCH']
-
-    puts("Switching to branch: #{default_branch} to commit localization files.")
-    sh('git', 'fetch')
-    sh('git', 'checkout', default_branch)
-    git_pull
 
     locales.each do |locale|
       begin
@@ -105,7 +103,6 @@ platform :ios do
     begin
       git_commit(path: "*/#{filename}",
                  message: "[skip ci] Adding latest localization files from Onesky")
-      push_to_git_remote
     rescue
       puts("Failed to commit localization files.. maybe none to commit?")
     end
@@ -127,14 +124,13 @@ platform :ios do
     profile_name = options[:profile_name] || ENV["CRU_APPSTORE_PROFILE_NAME"]
     type = options[:type] || 'appstore'
     export_method = options[:export_method] || 'app-store'
-    build_branch = ENV['TRAVIS_BRANCH'] || ENV['TRAVIS_TAG']
+    build_branch = ENV['TRAVIS_BRANCH']
+
+    sh('git', 'checkout', build_branch)
 
     if ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].nil?
       cru_download_localizations
     end
-
-    puts("Switching to branch: #{build_branch} to continue building project.")
-    sh('git', 'checkout', build_branch)
 
     automatic_code_signing(
         use_automatic_signing: false,
@@ -182,20 +178,10 @@ platform :ios do
   end
 
   lane :cru_update_commit do |options|
-    default_branch = ENV['CRU_DEFAULT_BRANCH']
-
-    clean_build_artifacts
-
-    puts("Switching to branch: #{default_branch} to commit version bump.")
-    sh('git', 'checkout', default_branch)
-    git_pull
-
     commit_version_bump(
         xcodeproj: ENV["CRU_XCODEPROJ"],
         message: options[:message]
     )
-
-    push_to_git_remote
   end
 
   lane :cru_notify_users do |options|
