@@ -73,6 +73,12 @@ platform :ios do
     locales = ENV["ONESKY_ENABLED_LOCALIZATIONS"].split(',')
     filename = ENV["ONESKY_FILENAME"]
     scheme = ENV['CRU_SCHEME']
+    default_branch = ENV['CRU_DEFAULT_BRANCH']
+
+    puts("Switching to branch: #{default_branch} to commit localization files.")
+    sh('git', 'fetch')
+    sh('git', 'checkout', default_branch)
+    git_pull
 
     locales.each do |locale|
       begin
@@ -95,13 +101,8 @@ platform :ios do
   desc 'Commit downloaded localization files to default branch and push to remote'
   lane :cru_commit_localization_files do |options|
     filename = options[:filename]
-    default_branch = ENV['CRU_DEFAULT_BRANCH']
 
     begin
-      puts("Switching to branch: #{default_branch} to commit localization files.")
-      sh('git', 'checkout', default_branch)
-      git_pull
-
       git_commit(path: "*/#{filename}",
                  message: "[skip ci] Adding latest localization files from Onesky")
       push_to_git_remote
