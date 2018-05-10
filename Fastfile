@@ -53,6 +53,9 @@ platform :ios do
   lane :beta do
     build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
+    build_branch = ENV['TRAVIS_BRANCH']
+
+    sh('git', 'checkout', build_branch)
 
     ipa_path = cru_build_app
 
@@ -124,9 +127,6 @@ platform :ios do
     profile_name = options[:profile_name] || ENV["CRU_APPSTORE_PROFILE_NAME"]
     type = options[:type] || 'appstore'
     export_method = options[:export_method] || 'app-store'
-    build_branch = ENV['TRAVIS_BRANCH']
-
-    sh('git', 'checkout', build_branch)
 
     if ENV['CRU_SKIP_LOCALIZATION_DOWNLOAD'].nil?
       cru_download_localizations
@@ -178,10 +178,10 @@ platform :ios do
   end
 
   lane :cru_update_commit do |options|
-    commit_version_bump(
-        xcodeproj: ENV["CRU_XCODEPROJ"],
-        message: options[:message]
-    )
+    project_file_path = "#{ENV['CRU_XCODEPROJ']}/project.pbxproj"
+    info_file_path = "#{ENV['CRU_SCHEME']}/Info.plist"
+    git_commit(path:[project_file_path, info_file_path],
+               message: options[:message])
   end
 
   lane :cru_notify_users do |options|
