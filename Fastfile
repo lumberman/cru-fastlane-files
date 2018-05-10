@@ -64,6 +64,7 @@ platform :ios do
         app_identifier: ENV["CRU_APP_IDENTIFIER"],
         ipa: ipa_path,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
+        changelog: ENV["TRAVIS_COMMIT_MESSAGE"]
     )
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
