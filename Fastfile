@@ -15,6 +15,12 @@ platform :ios do
 
   desc "Push a new release build to the App Store"
   lane :release do |options|
+    tag = ENV['TRAVIS_TAG'] || ''
+
+    if tag =~ /.*-android/
+      next
+    end
+
     target = ENV["CRU_TARGET"]
     submit_for_review = options.key?(:submit) && options[:submit] || false
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false

@@ -15,6 +15,12 @@ platform :android do
 
   desc "Promote a Beta Build to the Release Channel"
   lane :release do
+    tag = ENV['TRAVIS_TAG'] || ''
+
+    if tag =~ /.*-ios/
+      next
+    end
+
     upload_to_play_store(track: 'internal',
                          track_promote_to: 'production',
                          json_key: './fastlane/GooglePlayAPI.json',
