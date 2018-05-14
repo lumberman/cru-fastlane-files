@@ -15,7 +15,7 @@ platform :android do
 
   desc "Promote a Beta Build to the Release Channel"
   lane :release do
-    upload_to_play_store(track: 'beta',
+    upload_to_play_store(track: 'internal',
                          track_promote_to: 'production',
                          json_key: './fastlane/GooglePlayAPI.json',
                          skip_upload_metadata: true,
@@ -30,7 +30,7 @@ platform :android do
 
     cru_build_app
 
-    upload_to_play_store(track: 'beta',
+    upload_to_play_store(track: 'internal',
                          json_key: './fastlane/GooglePlayAPI.json',
                          skip_upload_metadata: true,
                          skip_upload_screenshots: true,
