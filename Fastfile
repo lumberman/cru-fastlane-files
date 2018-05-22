@@ -42,12 +42,6 @@ platform :ios do
         submit_for_review: submit_for_review,
     )
 
-    increment_version_number # do a default patch bump for the next version
-
-    cru_update_commit(message: "[skip ci] Version number bump to #{version_number}, Build number: ##{build_number}")
-
-    push_to_git_remote
-
     cru_notify_users("#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
     if submit_for_review
