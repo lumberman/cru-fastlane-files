@@ -143,7 +143,7 @@ platform :ios do
     if ENV["CRU_SKIP_COCOAPODS"].nil?
       cocoapods(
           podfile: './Podfile',
-          repo_update: true
+          try_repo_update_on_error: true
       )
     end
 
