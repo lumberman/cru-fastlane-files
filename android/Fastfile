@@ -47,6 +47,7 @@ platform :android do
 
   lane :cru_build_app do
     gradle(task: "clean assembleRelease",
+           print_command: false,
            properties: {
                'android.injected.signing.store.file': ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE'],
                'android.injected.signing.store.password': ENV['GOOGLE_PLAY_UPLOAD_KEY_PASSWORD'],
