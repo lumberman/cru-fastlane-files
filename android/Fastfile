@@ -42,14 +42,20 @@ platform :android do
                          skip_upload_screenshots: true,
                          skip_upload_images: true)
 
-    cru_notify_users(message: "#{ENV['CRU_PROJECT_NAME']} Android Beta Build released to Play Store Beta Channel.")
+    cru_notify_users(message: "#{ENV['CRU_PROJECT_NAME']} Android Beta Build released to Play Store Internal Test Channel.")
   end
 
   lane :cru_build_app do
+    keystore_filename = ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE']
+
+    # this was mind numbing to figure out, no matter which place I put the keystore, the gradle build would
+    # expect it in the other place. the only working and dumb solution I found was to put it in both places.
+    sh('cp', "app/#{keystore_filename}", "./#{keystore_filename}")
+
     gradle(task: "clean assembleRelease",
            print_command: false,
            properties: {
-               'android.injected.signing.store.file': ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE'],
+               'android.injected.signing.store.file': keystore_filename,
                'android.injected.signing.store.password': ENV['GOOGLE_PLAY_UPLOAD_KEY_PASSWORD'],
                'android.injected.signing.key.alias': ENV['GOOGLE_PLAY_UPLOAD_KEY_ALIAS'],
                'android.injected.signing.key.password': ENV['GOOGLE_PLAY_UPLOAD_KEY_PASSWORD'],
