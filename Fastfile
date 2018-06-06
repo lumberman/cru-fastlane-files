@@ -15,9 +15,9 @@ platform :ios do
 
   desc "Push a new release build to the App Store"
   lane :release do |options|
-    tag = ENV['TRAVIS_TAG'] || ''
+    git_ref = ENV['TRAVIS_TAG'] || ENV['TRAVIS_BRANCH']
 
-    if tag =~ /.*-android/
+    if git_ref =~ /.*-android/
       next
     end
 
@@ -25,7 +25,7 @@ platform :ios do
     submit_for_review = options.key?(:submit) && options[:submit] || false
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false
     include_metadata = options.key?(:include_metadata) && options[:include_metadata] || false
-    
+
     version_number = get_version_number(
         target: target
     )
@@ -43,6 +43,21 @@ platform :ios do
         automatic_release: automatic_release,
         submit_for_review: submit_for_review,
     )
+
+    unless ENV['TRAVIS_BRANCH'].nil?
+      increment_version_number(bump_type: 'patch')
+
+      sh('git','commit',"#{ENV['CRU_XCODEPROJ']}/project.pbxproj",'-m \'[skip ci] Bump version number for next release\'')
+
+      push_to_git_remote
+
+      unless ENV['CRU_GITHUB_REPO'].nil?
+        git_pull_request(
+            repo: ENV['CRU_GITHUB_REPO'],
+            title: "[skip ci] Release updates for version #{version_number}",
+        )
+      end
+    end
 
     cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
