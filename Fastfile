@@ -42,10 +42,10 @@ platform :ios do
         submit_for_review: submit_for_review,
     )
 
-    cru_notify_users("#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
+    cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
     if submit_for_review
-      cru_notify_users("Build has been submitted for review and will be #{automatic_release ? 'automatically' : 'manually'} released.")
+      cru_notify_users(message: "Build has been submitted for review and will be #{automatic_release ? 'automatically' : 'manually'} released.")
     end
   end
 
