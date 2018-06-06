@@ -24,6 +24,8 @@ platform :ios do
     target = ENV["CRU_TARGET"]
     submit_for_review = options.key?(:submit) && options[:submit] || false
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false
+    include_metadata = options.key?(:include_metadata) && options[:include_metadata] || false
+    
     version_number = get_version_number(
         target: target
     )
@@ -36,7 +38,7 @@ platform :ios do
         build_number: build_number,
         dev_portal_team_id: ENV["CRU_DEV_PORTAL_TEAM_ID"],
         skip_screenshots: true,
-        skip_metadata: true,
+        skip_metadata: !include_metadata,
         app_version: version_number,
         automatic_release: automatic_release,
         submit_for_review: submit_for_review,
