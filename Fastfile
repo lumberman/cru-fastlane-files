@@ -53,8 +53,12 @@ platform :ios do
 
   desc "Push a new (beta) release build to TestFlight"
   lane :beta do
-    build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
+
+    build_number = cru_set_build_number
+    version_number =  get_version_number(
+        target: target
+    )
     build_branch = ENV['TRAVIS_BRANCH']
 
     sh('git', 'checkout', build_branch)
@@ -70,6 +74,12 @@ platform :ios do
     )
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
+
+    cru_push_release_to_github(
+        version_number: version_number,
+        project_name: ENV["CRU_TARGET"],
+        ipa_path: ipa_path
+    )
 
     push_to_git_remote
 
@@ -194,6 +204,24 @@ platform :ios do
         channel: ENV["HIPCHAT_CHANNEL"],
         version: "2",
         custom_color: "green"
+    )
+  end
+
+  lane :cru_push_release_to_github do |params|
+    version = params[:version_number]
+    project_name = params[:project_name]
+    build = ENV["TRAVIS_BUILD_NUMBER"]
+    ipa_path = params[:ipa_path]
+
+    set_github_release(
+        repository_name: ENV["TRAVIS_REPO_SLUG"],
+        api_token: ENV["CI_USER_TOKEN"],
+        name: "#{project_name} beta release. #{version}-#{build}",
+        tag_name: "#{version}-#{build}",
+        description: "",
+        commitish: ENV["TRAVIS_BRANCH"],
+        upload_assets: [ipa_path],
+        is_prerelease: true
     )
   end
 end
