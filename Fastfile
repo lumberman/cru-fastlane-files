@@ -22,7 +22,7 @@ platform :ios do
     end
 
     target = ENV["CRU_TARGET"]
-    submit_for_review = options.key?(:submit) && options[:submit] || false
+
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false
     include_metadata = options.key?(:include_metadata) && options[:include_metadata] || false
     
@@ -41,21 +41,25 @@ platform :ios do
         skip_metadata: !include_metadata,
         app_version: version_number,
         automatic_release: automatic_release,
-        submit_for_review: submit_for_review,
+        submit_for_review: true,
         submission_information: cru_submission_information
     )
 
-    cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
+    cru_bump_version_number(version_number: version_number)
 
-    if submit_for_review
-      cru_notify_users(message: "Build has been submitted for review and will be #{automatic_release ? 'automatically' : 'manually'} released.")
-    end
+    cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
+    cru_notify_users(message: "Build has been submitted for review and will be #{automatic_release ? 'automatically' : 'manually'} released.")
+
   end
 
   desc "Push a new (beta) release build to TestFlight"
   lane :beta do
-    build_number = cru_set_build_number
     target = ENV["CRU_TARGET"]
+
+    build_number = cru_set_build_number
+    version_number =  get_version_number(
+        target: target
+    )
     build_branch = ENV['TRAVIS_BRANCH']
 
     sh('git', 'checkout', build_branch)
@@ -71,6 +75,12 @@ platform :ios do
     )
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
+
+    cru_push_release_to_github(
+        version_number: version_number,
+        project_name: ENV["CRU_TARGET"],
+        ipa_path: ipa_path
+    )
 
     push_to_git_remote
 
@@ -189,6 +199,18 @@ platform :ios do
                message: options[:message])
   end
 
+  lane :cru_bump_version_number do |params|
+    if "v#{params[:version_number]}".eql? ENV['TRAVIS_TAG']
+
+      sh('git remote set-branches --add origin master')
+      sh('git fetch origin master:master')
+      sh('git checkout master')
+      version_number = increment_version_number(bump_type: 'patch')
+      cru_update_commit(message: "[skip ci] Bumping version number to #{version_number} for next build")
+      push_to_git_remote
+    end
+  end
+
   lane :cru_notify_users do |options|
     hipchat(
         message: options[:message],
@@ -218,5 +240,22 @@ platform :ios do
         add_id_info_uses_idfa: ENV['CRU_IDFA_IS_ENABLED'] || false
     }
   end
-end
 
+  lane :cru_push_release_to_github do |params|
+    version = params[:version_number]
+    project_name = params[:project_name]
+    build = ENV["TRAVIS_BUILD_NUMBER"]
+    ipa_path = params[:ipa_path]
+
+    set_github_release(
+        repository_name: ENV["TRAVIS_REPO_SLUG"],
+        api_token: ENV["CI_USER_TOKEN"],
+        name: "#{project_name} beta release  ##{version}-#{build}",
+        tag_name: "#{version}-#{build}",
+        description: "",
+        commitish: ENV["TRAVIS_BRANCH"],
+        upload_assets: [ipa_path],
+        is_prerelease: true
+    )
+  end
+end
