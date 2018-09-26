@@ -42,6 +42,7 @@ platform :ios do
         app_version: version_number,
         automatic_release: automatic_release,
         submit_for_review: true,
+        submission_information: cru_submission_information
     )
 
     cru_bump_version_number(version_number: version_number)
@@ -217,6 +218,27 @@ platform :ios do
         version: "2",
         custom_color: "green"
     )
+  end
+
+  def cru_submission_information
+    {
+        export_compliance_available_on_french_store: false,
+        export_compliance_contains_proprietary_cryptography: false,
+        export_compliance_contains_third_party_cryptography: false,
+        export_compliance_is_exempt: false,
+        export_compliance_uses_encryption: false,
+        export_compliance_app_type: nil,
+        export_compliance_encryption_updated: false,
+        export_compliance_compliance_required: false,
+        export_compliance_platform: "ios",
+        content_rights_contains_third_party_content: false,
+        content_rights_has_rights: false,
+        add_id_info_limits_tracking: true,
+        add_id_info_serves_ads: ENV['CRU_IDFA_SERVES_ADS'] || false,
+        add_id_info_tracks_action: ENV['CRU_IDFA_TRACKS_ACTION'] || false,
+        add_id_info_tracks_install: ENV['CRU_IDFA_TRACKS_INSTALL'] || false,
+        add_id_info_uses_idfa: ENV['CRU_IDFA_IS_ENABLED'] || false
+    }
   end
 
   lane :cru_push_release_to_github do |params|
