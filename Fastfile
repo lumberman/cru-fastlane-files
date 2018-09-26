@@ -44,6 +44,8 @@ platform :ios do
         submit_for_review: submit_for_review,
     )
 
+    cru_bump_version_number(version_number: version_number)
+
     cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
 
     if submit_for_review
@@ -186,6 +188,16 @@ platform :ios do
     info_file_path = "#{ENV['CRU_SCHEME']}/Info.plist"
     git_commit(path:[project_file_path, info_file_path],
                message: options[:message])
+  end
+
+  lane :cru_bump_version_number do |params|
+    return unless params[:version_number].eql? ENV['TRAVIS_TAG']
+
+    sh('git fetch --unshallow')
+    sh('git checkout master')
+    version_number = increment_version_number(bump_type: 'patch')
+    cru_update_commit(message: "[skip ci] Bumping version number to #{version_number} for next build")
+    push_to_git_remote
   end
 
   lane :cru_notify_users do |options|
