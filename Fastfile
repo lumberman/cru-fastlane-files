@@ -191,13 +191,15 @@ platform :ios do
   end
 
   lane :cru_bump_version_number do |params|
-    return unless params[:version_number].eql? ENV['TRAVIS_TAG']
+    if "v#{params[:version_number]}".eql? ENV['TRAVIS_TAG']
 
-    sh('git fetch --unshallow')
-    sh('git checkout master')
-    version_number = increment_version_number(bump_type: 'patch')
-    cru_update_commit(message: "[skip ci] Bumping version number to #{version_number} for next build")
-    push_to_git_remote
+      sh('git remote set-branches --add origin master')
+      sh('git fetch origin master:master')
+      sh('git checkout master')
+      version_number = increment_version_number(bump_type: 'patch')
+      cru_update_commit(message: "[skip ci] Bumping version number to #{version_number} for next build")
+      push_to_git_remote
+    end
   end
 
   lane :cru_notify_users do |options|
@@ -209,4 +211,3 @@ platform :ios do
     )
   end
 end
-
