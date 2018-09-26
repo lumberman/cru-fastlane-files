@@ -43,7 +43,6 @@ platform :ios do
         automatic_release: automatic_release,
         submit_for_review: submit_for_review,
         submission_information: cru_submission_information
-        )
     )
 
     cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
