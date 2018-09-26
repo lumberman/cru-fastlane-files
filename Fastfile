@@ -216,7 +216,7 @@ platform :ios do
     set_github_release(
         repository_name: ENV["TRAVIS_REPO_SLUG"],
         api_token: ENV["CI_USER_TOKEN"],
-        name: "#{project_name} beta release. #{version}-#{build}",
+        name: "#{project_name} beta release  ##{version}-#{build}",
         tag_name: "#{version}-#{build}",
         description: "",
         commitish: ENV["TRAVIS_BRANCH"],
