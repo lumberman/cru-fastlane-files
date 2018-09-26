@@ -44,6 +44,8 @@ platform :ios do
         submit_for_review: true,
     )
 
+    cru_bump_version_number(version_number: version_number)
+
     cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
     cru_notify_users(message: "Build has been submitted for review and will be #{automatic_release ? 'automatically' : 'manually'} released.")
 
@@ -186,6 +188,18 @@ platform :ios do
                message: options[:message])
   end
 
+  lane :cru_bump_version_number do |params|
+    if "v#{params[:version_number]}".eql? ENV['TRAVIS_TAG']
+
+      sh('git remote set-branches --add origin master')
+      sh('git fetch origin master:master')
+      sh('git checkout master')
+      version_number = increment_version_number(bump_type: 'patch')
+      cru_update_commit(message: "[skip ci] Bumping version number to #{version_number} for next build")
+      push_to_git_remote
+    end
+  end
+
   lane :cru_notify_users do |options|
     hipchat(
         message: options[:message],
@@ -195,4 +209,3 @@ platform :ios do
     )
   end
 end
-
