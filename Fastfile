@@ -199,7 +199,7 @@ platform :ios do
     )
   end
 
-  lane :cru_submission_information do
+  def cru_submission_information do
     {
         export_compliance_available_on_french_store: false,
         export_compliance_contains_proprietary_cryptography: false,
