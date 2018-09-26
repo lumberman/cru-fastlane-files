@@ -22,7 +22,7 @@ platform :ios do
     end
 
     target = ENV["CRU_TARGET"]
-    submit_for_review = options.key?(:submit) && options[:submit] || false
+
     automatic_release = options.key?(:auto_release) && options[:auto_release] || false
     include_metadata = options.key?(:include_metadata) && options[:include_metadata] || false
     
@@ -41,7 +41,7 @@ platform :ios do
         skip_metadata: !include_metadata,
         app_version: version_number,
         automatic_release: automatic_release,
-        submit_for_review: submit_for_review,
+        submit_for_review: true,
     )
 
     cru_notify_users(message: "#{target} iOS Release Build #{version_number} (#{build_number}) submitted to App Store.")
