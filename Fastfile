@@ -76,10 +76,11 @@ platform :ios do
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
 
+    adhoc_ipa_path = cru_build_app profile_name:ENV["CRU_ADHOC_PROFILE_NAME"] type:adhoc export_method:ad-hoc
     cru_push_release_to_github(
         version_number: version_number,
         project_name: ENV["CRU_TARGET"],
-        ipa_path: ipa_path
+        ipa_path: adhoc_ipa_path
     )
 
     push_to_git_remote
