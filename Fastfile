@@ -77,8 +77,8 @@ platform :ios do
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
 
     github_ipa_release_path = ipa_path
-    if adhoc_profile = ENV["CRU_ADHOC_PROFILE_NAME"]
-      github_ipa_release_path = cru_build_app(profile_name: adhoc_profile, type: "adhoc", export_method: "ad-hoc")
+    unless ENV["CRU_ADHOC_PROFILE_NAME"].nil?
+      github_ipa_release_path = cru_build_app(profile_name: ENV["CRU_ADHOC_PROFILE_NAME"], type: "adhoc", export_method: "ad-hoc")
     end
 
     cru_push_release_to_github(
