@@ -75,18 +75,6 @@ platform :ios do
     )
 
     cru_update_commit(message: "[skip ci] Build number bump to ##{build_number}")
-
-    github_ipa_release_path = ipa_path
-    unless ENV["CRU_ADHOC_PROFILE_NAME"].nil?
-      github_ipa_release_path = cru_build_app(profile_name: ENV["CRU_ADHOC_PROFILE_NAME"], type: "adhoc", export_method: "ad-hoc")
-    end
-
-    cru_push_release_to_github(
-        version_number: version_number,
-        project_name: ENV["CRU_TARGET"],
-        ipa_path: github_ipa_release_path
-    )
-
     push_to_git_remote
 
     cru_notify_users(message: "#{target} iOS Beta Build ##{build_number} released to TestFlight.")
@@ -174,6 +162,24 @@ platform :ios do
             }
         }
     )
+  end
+
+  lane :cru_build_adhoc do |options|
+    unless ENV["CRU_ADHOC_PROFILE_NAME"].nil?
+      target = ENV["CRU_TARGET"]
+      version_number =  get_version_number(
+        target: target
+      )
+
+      github_ipa_release_path = cru_build_app(profile_name: ENV["CRU_ADHOC_PROFILE_NAME"], type: "adhoc", export_method: "ad-hoc")
+      cru_push_release_to_github(
+        version_number: version_number,
+        project_name: target,
+        ipa_path: github_ipa_release_path
+      )
+
+      push_to_git_remote
+    end
   end
 
   lane :cru_fetch_certs do |options|
