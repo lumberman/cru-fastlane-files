@@ -244,7 +244,6 @@ platform :ios do
         export_compliance_platform: "ios",
         content_rights_contains_third_party_content: false,
         content_rights_has_rights: false,
-        add_id_info_limits_tracking: true,
         add_id_info_serves_ads: ENV['CRU_IDFA_SERVES_ADS'] || false,
         add_id_info_tracks_action: ENV['CRU_IDFA_TRACKS_ACTION'] || false,
         add_id_info_tracks_install: ENV['CRU_IDFA_TRACKS_INSTALL'] || false,
