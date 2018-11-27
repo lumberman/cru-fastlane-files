@@ -146,17 +146,17 @@ platform :ios do
 
     unless options.key?(:skip_create_keychain) && options[:skip_create_keychain]
       # Travis requires a keychain to be created to store the certificates in, however
-    # using this utility to create a keychain locally will really mess up local keychains
-    # and is not required for a successful build.
-    # It also cannot be called more than once (in the case that cru_build_app happens more than once in the same execution)
-    create_keychain(
-        name: ENV["MATCH_KEYCHAIN_NAME"],
-        password: ENV["MATCH_PASSWORD"],
-        default_keychain: true,
-        unlock: true,
-        timeout: 3600,
-        add_to_search_list: true
-      )
+      # using this utility to create a keychain locally will really mess up local keychains
+      # and is not required for a successful build.
+      # It also cannot be called more than once (in the case that cru_build_app happens more than once in the same execution)
+      create_keychain(
+          name: ENV["MATCH_KEYCHAIN_NAME"],
+          password: ENV["MATCH_PASSWORD"],
+          default_keychain: true,
+          unlock: true,
+          timeout: 3600,
+          add_to_search_list: true
+        )
     end
 
     cru_fetch_certs(type: type)
@@ -203,12 +203,11 @@ platform :ios do
   end
 
   lane :cru_fetch_certs do |options|
-  match(type: options[:type],
-    username: ENV['CRU_FASTLANE_USERNAME'],
-    app_identifier: ENV['CRU_APP_IDENTIFIER'],
-    keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
-    keychain_password: ENV["MATCH_PASSWORD"])
-
+    match(type: options[:type],
+      username: ENV['CRU_FASTLANE_USERNAME'],
+      app_identifier: ENV['CRU_APP_IDENTIFIER'],
+      keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
+      keychain_password: ENV["MATCH_PASSWORD"])
   end
 
   lane :cru_update_commit do |options|
