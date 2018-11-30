@@ -144,6 +144,15 @@ platform :ios do
         profile_name: profile_name
     )
 
+    unless ENV["CRU_CALLDIRECTORY_TARGET"].nil?
+      call_directory_profile  = type == "adhoc" ? ENV["CRU_CALLDIRECTORY_ADHOC_PROFILE_NAME"] : ENV["CRU_CALLDIRECTORY_APPSTORE_PROFILE_NAME"]
+      automatic_code_signing(
+          use_automatic_signing: false,
+          targets: ENV["CRU_CALLDIRECTORY_TARGET"],
+          profile_name: call_directory_profile
+      )
+    end
+
     cru_fetch_certs(type: type)
 
     if ENV["CRU_SKIP_COCOAPODS"].nil?
@@ -201,6 +210,13 @@ platform :ios do
           keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
           keychain_password: ENV["MATCH_PASSWORD"])
 
+    unless ENV["CRU_CALLDIRECTORY_APP_IDENTIFIER"].nil?
+      match(type: options[:type],
+          username: ENV['CRU_FASTLANE_USERNAME'],
+          app_identifier: ENV['CRU_CALLDIRECTORY_APP_IDENTIFIER'],
+          keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
+          keychain_password: ENV["MATCH_PASSWORD"])
+    end 
   end
 
   lane :cru_update_commit do |options|
