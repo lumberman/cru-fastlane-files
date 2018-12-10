@@ -163,6 +163,7 @@ platform :ios do
     end
 
     gym(
+	suppress_xcode_output: true,
         silent: true,
 	scheme: ENV["CRU_SCHEME"],
         export_method: export_method,
