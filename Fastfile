@@ -158,6 +158,7 @@ platform :ios do
           timeout: 3600,
           add_to_search_list: true
         )
+    end
     unless ENV["CRU_CALLDIRECTORY_TARGET"].nil?
       call_directory_profile  = type == "adhoc" ? ENV["CRU_CALLDIRECTORY_ADHOC_PROFILE_NAME"] : ENV["CRU_CALLDIRECTORY_APPSTORE_PROFILE_NAME"]
       automatic_code_signing(
@@ -216,7 +217,6 @@ platform :ios do
       app_identifier: ENV['CRU_APP_IDENTIFIER'],
       keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
       keychain_password: ENV["MATCH_PASSWORD"])
-  end
 
     unless ENV["CRU_CALLDIRECTORY_APP_IDENTIFIER"].nil?
       match(type: options[:type],
