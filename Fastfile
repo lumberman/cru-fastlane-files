@@ -216,7 +216,7 @@ platform :ios do
       app_identifier: ENV['CRU_APP_IDENTIFIER'],
       keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
       keychain_password: ENV["MATCH_PASSWORD"])
-
+  end
 
     unless ENV["CRU_CALLDIRECTORY_APP_IDENTIFIER"].nil?
       match(type: options[:type],
