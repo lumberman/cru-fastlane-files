@@ -144,6 +144,20 @@ platform :ios do
         profile_name: profile_name
     )
 
+
+    unless options.key?(:skip_create_keychain) && options[:skip_create_keychain]
+      # Travis requires a keychain to be created to store the certificates in, however
+      # using this utility to create a keychain locally will really mess up local keychains
+      # and is not required for a successful build.
+      # It also cannot be called more than once (in the case that cru_build_app happens more than once in the same execution)
+      create_keychain(
+          name: ENV["MATCH_KEYCHAIN_NAME"],
+          password: ENV["MATCH_PASSWORD"],
+          default_keychain: true,
+          unlock: true,
+          timeout: 3600,
+          add_to_search_list: true
+        )
     unless ENV["CRU_CALLDIRECTORY_TARGET"].nil?
       call_directory_profile  = type == "adhoc" ? ENV["CRU_CALLDIRECTORY_ADHOC_PROFILE_NAME"] : ENV["CRU_CALLDIRECTORY_APPSTORE_PROFILE_NAME"]
       automatic_code_signing(
@@ -180,7 +194,12 @@ platform :ios do
         target: target
       )
 
-      github_ipa_release_path = cru_build_app(profile_name: ENV["CRU_ADHOC_PROFILE_NAME"], type: "adhoc", export_method: "ad-hoc")
+      github_ipa_release_path = cru_build_app(
+                      profile_name: ENV["CRU_ADHOC_PROFILE_NAME"], 
+                      type: "adhoc", 
+                      export_method: "ad-hoc",
+                      skip_create_keychain: options[:skip_create_keychain] || false)
+
       cru_push_release_to_github(
         version_number: version_number,
         project_name: target,
@@ -192,23 +211,12 @@ platform :ios do
   end
 
   lane :cru_fetch_certs do |options|
-    # Travis requires a keychain to be created to store the certificates in, however
-    # using this utility to create a keychain locally will really mess up local keychains
-    # and is not required for a successful build
-    create_keychain(
-        name: ENV["MATCH_KEYCHAIN_NAME"],
-        password: ENV["MATCH_PASSWORD"],
-        default_keychain: true,
-        unlock: true,
-        timeout: 3600,
-        add_to_search_list: true
-    )
-
     match(type: options[:type],
-          username: ENV['CRU_FASTLANE_USERNAME'],
-          app_identifier: ENV['CRU_APP_IDENTIFIER'],
-          keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
-          keychain_password: ENV["MATCH_PASSWORD"])
+      username: ENV['CRU_FASTLANE_USERNAME'],
+      app_identifier: ENV['CRU_APP_IDENTIFIER'],
+      keychain_name: ENV["MATCH_KEYCHAIN_NAME"],
+      keychain_password: ENV["MATCH_PASSWORD"])
+
 
     unless ENV["CRU_CALLDIRECTORY_APP_IDENTIFIER"].nil?
       match(type: options[:type],
