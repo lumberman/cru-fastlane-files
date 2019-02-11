@@ -247,12 +247,13 @@ platform :ios do
   end
 
   lane :cru_notify_users do |options|
-    hipchat(
-        message: options[:message],
-        channel: ENV["HIPCHAT_CHANNEL"],
-        version: "2",
-        custom_color: "green"
-    )
+    if ENV["SLACK_URL"]
+      slack(
+        slack_url: ENV["SLACK_URL"],
+        fail_on_error: false,
+        message: options[:message]
+      )
+    end
   end
 
   def cru_submission_information
