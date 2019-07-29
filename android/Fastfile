@@ -33,11 +33,11 @@ platform :android do
 
   desc "Submit a new Beta Build to the Play Store Beta Channel"
   lane :beta do
-
     cru_build_app
 
     upload_to_play_store(track: 'internal',
                          json_key: './fastlane/GooglePlayAPI.json',
+                         mapping: ENV['CRU_MAPPING_FILE'],
                          skip_upload_metadata: true,
                          skip_upload_screenshots: true,
                          skip_upload_images: true)
