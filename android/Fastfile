@@ -46,7 +46,7 @@ platform :android do
   end
 
   lane :cru_build_app do
-    keystore_filename = File.expand_path(ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE'])
+    keystore_filename = File.expand_path(ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE'], File.expand_path('..'))
     task = ENV['CRU_GRADLE_TASK'] || 'clean assembleRelease'
 
     gradle(task: task,
