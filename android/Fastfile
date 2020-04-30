@@ -46,12 +46,8 @@ platform :android do
   end
 
   lane :cru_build_app do
-    keystore_filename = ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE']
+    keystore_filename = File.expand_path(ENV['GOOGLE_PLAY_UPLOAD_KEYSTORE'])
     task = ENV['CRU_GRADLE_TASK'] || 'clean assembleRelease'
-
-    # this was mind numbing to figure out, no matter which place I put the keystore, the gradle build would
-    # expect it in the other place. the only working and dumb solution I found was to put it in both places.
-    sh('cp', "../app/#{keystore_filename}", "../#{keystore_filename}")
 
     gradle(task: task,
            print_command: false,
